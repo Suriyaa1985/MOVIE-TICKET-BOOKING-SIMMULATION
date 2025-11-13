@@ -1,0 +1,40 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class MovieTicketBooking {
+
+    // Data structures
+    public static List<String> theatres = new ArrayList<>();
+    public static Map<String, List<String>> movies = new HashMap<>();
+    public static Map<String, List<String>> timings = new HashMap<>();
+    public static Map<String, Integer> availableSeats = new HashMap<>();
+    public static Map<String, Double> seatCosts = new HashMap<>();
+    public static Map<String, List<String>> bookings = new HashMap<>(); // Theatre -> List of booked seats with phone
+
+    static {
+        // Initialize sample data (can be empty or pre-filled)
+        theatres.add("Theatre A");
+        theatres.add("Theatre B");
+
+        movies.put("Theatre A", new ArrayList<>(List.of("Movie 1", "Movie 2")));
+        movies.put("Theatre B", new ArrayList<>(List.of("Movie 3", "Movie 4")));
+
+        timings.put("Theatre A", new ArrayList<>(List.of("10:00 AM", "2:00 PM")));
+        timings.put("Theatre B", new ArrayList<>(List.of("12:00 PM", "4:00 PM")));
+
+        availableSeats.put("Theatre A", 50);
+        availableSeats.put("Theatre B", 40);
+
+        seatCosts.put("Theatre A", 10.0);
+        seatCosts.put("Theatre B", 12.0);
+
+        bookings.put("Theatre A", new ArrayList<>());
+        bookings.put("Theatre B", new ArrayList<>());
+    }
+
+    public static void main(String[] args) {
+        javax.swing.SwingUtilities.invokeLater(() -> new LoginFrame());
+    }
+}
