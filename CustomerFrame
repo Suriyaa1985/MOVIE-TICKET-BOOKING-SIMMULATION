@@ -1,101 +1,40 @@
-import javax.swing.*;
-import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-class CustomerFrame extends JFrame {
-    private String phone;
+public class MovieTicketBooking {
 
-    public CustomerFrame(String phone) {
-        this.phone = phone;
-        setTitle("Customer Dashboard - " + phone);
-        setSize(700, 500);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
+    // Data structures
+    public static List<String> theatres = new ArrayList<>();
+    public static Map<String, List<String>> movies = new HashMap<>();
+    public static Map<String, List<String>> timings = new HashMap<>();
+    public static Map<String, Integer> availableSeats = new HashMap<>();
+    public static Map<String, Double> seatCosts = new HashMap<>();
+    public static Map<String, List<String>> bookings = new HashMap<>(); // Theatre -> List of booked seats with phone
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));  // Padding
+    static {
+        // Initialize sample data (can be empty or pre-filled)
+        theatres.add("Theatre A");
+        theatres.add("Theatre B");
 
-        for (String theatre : MovieTicketBooking.theatres) {
-            JPanel theatrePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            theatrePanel.setBorder(BorderFactory.createTitledBorder("Theatre: " + theatre));
-            theatrePanel.add(new JLabel("Movies: " + String.join(", ", MovieTicketBooking.movies.get(theatre))));
-            theatrePanel.add(new JLabel("Timings: " + String.join(", ", MovieTicketBooking.timings.get(theatre))));
-            theatrePanel.add(new JLabel("Available Seats: " + MovieTicketBooking.availableSeats.get(theatre)));
-            theatrePanel.add(new JLabel("Cost per Seat: $" + MovieTicketBooking.seatCosts.get(theatre)));
+        movies.put("Theatre A", new ArrayList<>(List.of("Movie 1", "Movie 2")));
+        movies.put("Theatre B", new ArrayList<>(List.of("Movie 3", "Movie 4")));
 
-            JButton bookButton = new JButton("Book Tickets");
-            bookButton.addActionListener(e -> bookTickets(theatre));
-            theatrePanel.add(bookButton);
+        timings.put("Theatre A", new ArrayList<>(List.of("10:00 AM", "2:00 PM")));
+        timings.put("Theatre B", new ArrayList<>(List.of("12:00 PM", "4:00 PM")));
 
-            mainPanel.add(theatrePanel);
-            mainPanel.add(Box.createRigidArea(new Dimension(0, 10)));  // Spacing
-        }
+        availableSeats.put("Theatre A", 50);
+        availableSeats.put("Theatre B", 40);
 
-        add(new JScrollPane(mainPanel), BorderLayout.CENTER);
+        seatCosts.put("Theatre A", 10.0);
+        seatCosts.put("Theatre B", 12.0);
 
-        // Add Back button
-        JButton backButton = new JButton("Back");
-        backButton.addActionListener(e -> {
-            new LoginFrame();
-            dispose();
-        });
-        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        bottomPanel.add(backButton);
-        add(bottomPanel, BorderLayout.SOUTH);
-
-        setVisible(true);
+        bookings.put("Theatre A", new ArrayList<>());
+        bookings.put("Theatre B", new ArrayList<>());
     }
 
-    private void bookTickets(String theatre) {
-        String timing = (String) JOptionPane.showInputDialog(this, "Select Timing:", "Timing", JOptionPane.QUESTION_MESSAGE, null, MovieTicketBooking.timings.get(theatre).toArray(), null);
-        if (timing == null) return;
-
-        String seatsStr = JOptionPane.showInputDialog("Enter number of seats:");
-        int seats = Integer.parseInt(seatsStr);
-        if (seats > MovieTicketBooking.availableSeats.get(theatre)) {
-            JOptionPane.showMessageDialog(this, "Not enough seats available");
-            return;
-        }
-
-        double cost = seats * MovieTicketBooking.seatCosts.get(theatre);
-        int confirm = JOptionPane.showConfirmDialog(this, "Total Cost: $" + cost + ". Proceed to payment?");
-        if (confirm != JOptionPane.YES_OPTION) return;
-
-        // Payment method choice
-        String[] options = {"Pay via UPI ID", "Pay via Phone Number"};
-        int choice = JOptionPane.showOptionDialog(this, "Select Payment Method:", "Payment", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-        if (choice == -1) return; // Cancelled
-
-        String paymentDetail = null;
-        if (choice == 0) { // UPI
-            paymentDetail = JOptionPane.showInputDialog("Enter UPI ID:");
-            if (paymentDetail == null || paymentDetail.isEmpty()) return;
-            JOptionPane.showMessageDialog(this, "Payment Successful via UPI: " + paymentDetail);
-        } else { // Phone Number
-            paymentDetail = getValidatedPhoneNumber("Enter Phone Number for Payment:");
-            if (paymentDetail == null) return;
-            JOptionPane.showMessageDialog(this, "Payment Successful via Phone: " + paymentDetail);
-        }
-
-        // Update bookings
-        MovieTicketBooking.availableSeats.put(theatre, MovieTicketBooking.availableSeats.get(theatre) - seats);
-        for (int i = 0; i < seats; i++) {
-            MovieTicketBooking.bookings.get(theatre).add("Seat " + (MovieTicketBooking.bookings.get(theatre).size() + 1) + " - Phone: " + phone);
-        }
-
-        JOptionPane.showMessageDialog(this, "Booking Confirmed. Seats: " + seats + " for " + phone);
-    }
-
-    private String getValidatedPhoneNumber(String message) {
-        while (true) {
-            String phone = JOptionPane.showInputDialog(message);
-            if (phone == null) return null; // Cancelled
-            if (phone.matches("\\d{10}")) {
-                return phone;
-            } else {
-                JOptionPane.showMessageDialog(this, "Phone number must be exactly 10 digits.");
-            }
-        }
+    public static void main(String[] args) {
+        javax.swing.SwingUtilities.invokeLater(() -> new LoginFrame());
     }
 }
