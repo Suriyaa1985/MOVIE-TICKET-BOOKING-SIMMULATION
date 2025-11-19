@@ -6,16 +6,14 @@ import java.util.List;
 class AdminFrame extends JFrame {
     public AdminFrame() {
         setTitle("Admin Dashboard");
-        setSize(700, 500);
+        setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));  // Padding
+        JPanel panel = new JPanel(new GridLayout(0, 1, 10, 10));
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // Add Theatre
-        JPanel addTheatrePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton addTheatreButton = new JButton("Add Theatre");
         addTheatreButton.addActionListener(e -> {
             String theatreName = JOptionPane.showInputDialog("Enter Theatre Name:");
@@ -31,12 +29,9 @@ class AdminFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, "Theatre name invalid or already exists");
             }
         });
-        addTheatrePanel.add(addTheatreButton);
-        mainPanel.add(addTheatrePanel);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        panel.add(addTheatreButton);
 
         // Change movies
-        JPanel changeMoviesPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton changeMoviesButton = new JButton("Change Movies");
         changeMoviesButton.addActionListener(e -> {
             String theatre = (String) JOptionPane.showInputDialog(this, "Select Theatre:", "Theatre", JOptionPane.QUESTION_MESSAGE, null, MovieTicketBooking.theatres.toArray(), null);
@@ -45,12 +40,9 @@ class AdminFrame extends JFrame {
             MovieTicketBooking.movies.put(theatre, new ArrayList<>(List.of(newMovies.split(","))));
             JOptionPane.showMessageDialog(this, "Movies updated for " + theatre);
         });
-        changeMoviesPanel.add(changeMoviesButton);
-        mainPanel.add(changeMoviesPanel);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        panel.add(changeMoviesButton);
 
         // Change timings
-        JPanel changeTimingsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton changeTimingsButton = new JButton("Change Timings");
         changeTimingsButton.addActionListener(e -> {
             String theatre = (String) JOptionPane.showInputDialog(this, "Select Theatre:", "Theatre", JOptionPane.QUESTION_MESSAGE, null, MovieTicketBooking.theatres.toArray(), null);
@@ -59,12 +51,9 @@ class AdminFrame extends JFrame {
             MovieTicketBooking.timings.put(theatre, new ArrayList<>(List.of(newTimings.split(","))));
             JOptionPane.showMessageDialog(this, "Timings updated for " + theatre);
         });
-        changeTimingsPanel.add(changeTimingsButton);
-        mainPanel.add(changeTimingsPanel);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        panel.add(changeTimingsButton);
 
         // Set seat costs
-        JPanel setCostsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton setCostsButton = new JButton("Set Seat Costs");
         setCostsButton.addActionListener(e -> {
             String theatre = (String) JOptionPane.showInputDialog(this, "Select Theatre:", "Theatre", JOptionPane.QUESTION_MESSAGE, null, MovieTicketBooking.theatres.toArray(), null);
@@ -74,12 +63,9 @@ class AdminFrame extends JFrame {
             MovieTicketBooking.seatCosts.put(theatre, cost);
             JOptionPane.showMessageDialog(this, "Cost updated for " + theatre);
         });
-        setCostsPanel.add(setCostsButton);
-        mainPanel.add(setCostsPanel);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        panel.add(setCostsButton);
 
         // Set available seats
-        JPanel setSeatsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton setSeatsButton = new JButton("Set Available Seats");
         setSeatsButton.addActionListener(e -> {
             String theatre = (String) JOptionPane.showInputDialog(this, "Select Theatre:", "Theatre", JOptionPane.QUESTION_MESSAGE, null, MovieTicketBooking.theatres.toArray(), null);
@@ -89,12 +75,9 @@ class AdminFrame extends JFrame {
             MovieTicketBooking.availableSeats.put(theatre, seats);
             JOptionPane.showMessageDialog(this, "Seats updated for " + theatre);
         });
-        setSeatsPanel.add(setSeatsButton);
-        mainPanel.add(setSeatsPanel);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        panel.add(setSeatsButton);
 
         // View bookings
-        JPanel viewBookingsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton viewBookingsButton = new JButton("View Bookings");
         viewBookingsButton.addActionListener(e -> {
             StringBuilder sb = new StringBuilder();
@@ -107,21 +90,16 @@ class AdminFrame extends JFrame {
             }
             JOptionPane.showMessageDialog(this, sb.toString());
         });
-        viewBookingsPanel.add(viewBookingsButton);
-        mainPanel.add(viewBookingsPanel);
+        panel.add(viewBookingsButton);
 
-        add(new JScrollPane(mainPanel), BorderLayout.CENTER);
-
-        // Add Back button
         JButton backButton = new JButton("Back");
         backButton.addActionListener(e -> {
             new LoginFrame();
             dispose();
         });
-        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        bottomPanel.add(backButton);
-        add(bottomPanel, BorderLayout.SOUTH);
+        panel.add(backButton);
 
+        add(new JScrollPane(panel), BorderLayout.CENTER);
         setVisible(true);
     }
 }
