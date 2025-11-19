@@ -4,88 +4,96 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 class LoginFrame extends JFrame {
+    private CardLayout cardLayout;
+    private JPanel mainPanel;
+    private JPasswordField passwordField;
+    private JCheckBox showPasswordCheckBox;
+
     public LoginFrame() {
         setTitle("Movie Ticket Booking - Login");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new GridLayout(3, 1));
+
+        cardLayout = new CardLayout();
+        mainPanel = new JPanel(cardLayout);
+
+        // Initial panel with buttons
+        JPanel initialPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
+        initialPanel.add(new JLabel("Select Login Type:", SwingConstants.CENTER), gbc);
 
         JButton adminButton = new JButton("Admin Login");
+        gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 1;
+        initialPanel.add(adminButton, gbc);
+
         JButton customerButton = new JButton("Customer Login");
+        gbc.gridx = 1; gbc.gridy = 1;
+        initialPanel.add(customerButton, gbc);
 
-        adminButton.addActionListener(e -> {
-            showAdminPasswordDialog();
-        });
+        mainPanel.add(initialPanel, "Initial");
 
-        customerButton.addActionListener(e -> {
-            String phone = getValidatedPhoneNumber("Enter Phone Number:");
-            if (phone != null) {
-                new CustomerFrame(phone);
+        // Admin password panel
+        JPanel adminPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbcAdmin = new GridBagConstraints();
+        gbcAdmin.insets = new Insets(10, 10, 10, 10);
+
+        gbcAdmin.gridx = 0; gbcAdmin.gridy = 0; gbcAdmin.gridwidth = 2;
+        adminPanel.add(new JLabel("Enter Admin Password:"), gbcAdmin);
+
+        passwordField = new JPasswordField(20);
+        gbcAdmin.gridx = 0; gbcAdmin.gridy = 1; gbcAdmin.gridwidth = 1;
+        adminPanel.add(passwordField, gbcAdmin);
+
+        showPasswordCheckBox = new JCheckBox("Show Password");
+        gbcAdmin.gridx = 1; gbcAdmin.gridy = 1;
+        adminPanel.add(showPasswordCheckBox, gbcAdmin);
+
+        JButton loginButton = new JButton("Login");
+        gbcAdmin.gridx = 0; gbcAdmin.gridy = 2; gbcAdmin.gridwidth = 1;
+        adminPanel.add(loginButton, gbcAdmin);
+
+        JButton backButton = new JButton("Back");
+        gbcAdmin.gridx = 1; gbcAdmin.gridy = 2;
+        adminPanel.add(backButton, gbcAdmin);
+
+        mainPanel.add(adminPanel, "Admin");
+
+        add(mainPanel);
+
+        // Event listeners
+        adminButton.addActionListener(e -> cardLayout.show(mainPanel, "Admin"));
+
+        loginButton.addActionListener(e -> {
+            String password = new String(passwordField.getPassword());
+            if ("Admin@123".equals(password)) {
+                new AdminFrame();
                 dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "Invalid Password");
             }
         });
 
-        add(new JLabel("Select Login Type:", SwingConstants.CENTER));
-        add(adminButton);
-        add(customerButton);
+        backButton.addActionListener(e -> cardLayout.show(mainPanel, "Initial"));
 
-        setVisible(true);
-    }
-
-    private void showAdminPasswordDialog() {
-        JDialog dialog = new JDialog(this, "Admin Login", true);
-        dialog.setSize(300, 150);
-        dialog.setLayout(new BorderLayout());
-
-        JPanel panel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-
-        gbc.gridx = 0; gbc.gridy = 0;
-        panel.add(new JLabel("Password:"), gbc);
-
-        JPasswordField passwordField = new JPasswordField(15);
-        gbc.gridx = 1;
-        panel.add(passwordField, gbc);
-
-        JCheckBox showPassword = new JCheckBox("Show Password");
-        showPassword.addActionListener(e -> {
-            if (showPassword.isSelected()) {
+        showPasswordCheckBox.addActionListener(e -> {
+            if (showPasswordCheckBox.isSelected()) {
                 passwordField.setEchoChar((char) 0);
             } else {
                 passwordField.setEchoChar('*');
             }
         });
-        gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 2;
-        panel.add(showPassword, gbc);
 
-        JButton okButton = new JButton("OK");
-        okButton.addActionListener(e -> {
-            String password = new String(passwordField.getPassword());
-            if ("Admin@123".equals(password)) {
-                new AdminFrame();
+        customerButton.addActionListener(e -> {
+            String phone = JOptionPane.showInputDialog("Enter Phone Number:");
+            if (phone != null && !phone.isEmpty()) {
+                new CustomerFrame(phone);
                 dispose();
-                dialog.dispose();
-            } else {
-                JOptionPane.showMessageDialog(dialog, "Invalid Password");
             }
         });
-        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
-        panel.add(okButton, gbc);
 
-        dialog.add(panel, BorderLayout.CENTER);
-        dialog.setVisible(true);
-    }
-
-    private String getValidatedPhoneNumber(String message) {
-        while (true) {
-            String phone = JOptionPane.showInputDialog(message);
-            if (phone == null) return null; // Cancelled
-            if (phone.matches("\\d{10}")) {
-                return phone;
-            } else {
-                JOptionPane.showMessageDialog(this, "Phone number must be exactly 10 digits.");
-            }
-        }
+        setVisible(true);
     }
 }
